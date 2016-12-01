@@ -4,12 +4,34 @@
 class Position 
 
   @@directions = ["N","E","S","W"]
-  attr_accessor :posx, :posy
+  attr_accessor :posx, :posy, :firstvisited
 
   def initialize(facing, posx, posy)
     @facing = facing
     @posx = posx
     @posy = posy
+    @visited = []
+    @firstvisited = nil
+  end
+
+  def step()
+    if @facing == "W" then
+      @posx -= 1
+    elsif @facing == "E" then
+      @posx += 1
+    elsif @facing == "N" then
+      @posy -= 1
+    elsif @facing == "S" then
+      @posy += 1
+    end
+    
+    coordstr = "#{@posx}:#{@posy}"
+
+    if @visited.index(coordstr) and @firstvisited == nil then
+      @firstvisited = @posx.abs+@posy.abs
+    end
+
+    @visited << coordstr
   end
 
   def move(direction, distance)
@@ -21,16 +43,11 @@ class Position
     end
 
     @facing = @@directions[newdir]
-    if @facing == "W" then
-      @posx -= distance.to_i
-    elsif @facing == "E" then
-      @posx += 1*distance.to_i
-    elsif @facing == "N" then
-      @posy -= distance.to_i
-    elsif @facing == "S" then
-      @posy += distance.to_i
-    end
 
+    for i in 1..distance.to_i
+      step()
+    end
+    
   end
 
   def to_s
@@ -49,6 +66,7 @@ File.read('day1.input').split(", ").each do |e|
   p.move(dir, distance)
 end
 
-puts "Result: #{p.posx.abs+p.posy.abs}"
+puts "* result: #{p.posx.abs+p.posy.abs}"
+puts "** Result: #{p.firstvisited}"
 
 

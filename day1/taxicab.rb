@@ -1,7 +1,7 @@
 #!/usr/bin/ruby
 
 
-class Position 
+class Position
 
   @@directions = ["N","E","S","W"]
   attr_accessor :posx, :posy, :firstvisited
@@ -14,6 +14,9 @@ class Position
     @firstvisited = nil
   end
 
+  def distance()
+    @posx.abs + @posy.abs
+  end
   def step()
     if @facing == "W" then
       @posx -= 1
@@ -24,7 +27,7 @@ class Position
     elsif @facing == "S" then
       @posy += 1
     end
-    
+
     coordstr = "#{@posx}:#{@posy}"
 
     if @visited.index(coordstr) and @firstvisited == nil then
@@ -38,7 +41,7 @@ class Position
     newdir = @@directions.index(@facing)
     if direction == "R" then
       newdir = (newdir + 1) % 4;
-    else 
+    else
       newdir = (newdir + 3) % 4;
     end
 
@@ -47,26 +50,31 @@ class Position
     for i in 1..distance.to_i
       step()
     end
-    
+
   end
 
   def to_s
     "X: #{@posx} Y: #{@posy} Facing: #{@facing}"
   end
 
-    
+
 end
 
-p = Position.new("N", 0, 0)
-
-File.read('day1.input').split(", ").each do |e|
-  m = e.strip.match(/([R,L])(.*)/)
-  dir = m[1]
-  distance = m[2]
-  p.move(dir, distance)
+def parseRoute(lines)
+  p = Position.new("N", 0, 0)
+  lines.split(", ").each do |e|
+    m = e.strip.match(/([R,L])(.*)/)
+    dir = m[1]
+    distance = m[2]
+    p.move(dir, distance)
+  end
+  p
 end
 
-puts "* result: #{p.posx.abs+p.posy.abs}"
-puts "** Result: #{p.firstvisited}"
 
+if __FILE__ == $0
+  p = parseRoute(File.read('day1.input'))
 
+  puts "* result: #{p.distance()}"
+  puts "** Result: #{p.firstvisited}"
+end
